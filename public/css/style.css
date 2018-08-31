@@ -1,0 +1,28 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+#form-chat {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: gray;
+  padding-bottom: 20px;
+  padding-top: 20px;
+
+}
+#text-box {
+  float: left;
+  width: 50%;
+  height: 60px;
+  border: none;
+  margin-left: 15%;
+}
+#send {
+  float: left;
+  width: 10%;
+  height: 66px;
+  margin-right: 15%;
+
+}

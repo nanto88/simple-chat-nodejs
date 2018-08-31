@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="css/style.css">
+    <title>chat realtime</title>
+  </head>
+  <body>
+    <h1>Chat</h1>
+    <ul id="messages">
+
+    </ul>
+    <form id="form-chat" action="/" method="post">
+      <!-- <input type="text" id="text-box" name="text-box" value=""> -->
+      <textarea name="message" id="text-box" rows="10" cols="30" placeholder="chat disini.."></textarea>
+      <button id="send" type="submit" name="button">Send</button>
+    </form>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io();
+
+      $('#form-chat').submit(function(){
+        socket.emit('newMessage', $('#text-box').val());
+        $('#text-box').val('');
+        return false;
+      });
+      socket.on('newMessage', function(msg){
+        $('#messages').append($('<li>').text(msg));
+      });
+    </script>
+  </body>
+</html>
