@@ -3,6 +3,9 @@ const app  = express();
 const http = require('http').Server(app);
 const io   = require('socket.io')(http);
 
+var users = {};
+var usernames = [];
+
 app.use(express.static("public"));
 
 app.get('/', function(req, res) {
@@ -10,6 +13,22 @@ app.get('/', function(req, res) {
 });
 
 io.on('connection', function(socket){
+  //broadcast other user
+  socket.broadcast.emit('newMessage', 'Someone Connected')
+
+  //validate user register
+  socket.on('registerUser', function(username){
+    //validate user if usernames not contain in user
+    if (usernames.indexOf(username) != -1) {
+      socket.emit('registerRespond', false);
+    } else {
+      // add key/id from socket id user to usernames
+      users[socket.id] = username;
+      usernames.push(username);
+      socket.emit('registerRespond', true);
+    }
+  });
+
   //if has new messages
   socket.on('newMessage', function(msg){
     io.emit('newMessage', msg);
@@ -18,8 +37,10 @@ io.on('connection', function(socket){
 
   socket.on('disconnect', function(msg){
     console.log('user disconnected');
+    //broadcast other user
+    socket.broadcast.emit('newMessage', 'Someone Disconnected')
   });
-  
+
 });
 
 http.listen(3000, function(){

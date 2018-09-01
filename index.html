@@ -2,31 +2,65 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link rel="stylesheet" href="css/style.css">
     <title>chat realtime</title>
   </head>
   <body>
-    <h1>Chat</h1>
-    <ul id="messages">
+    <div class="container">
+      <div id="homepage">
+        <h1>Welcome</h1>
+        <input type="text" name="user" id="user" value="" placeholder="Masukkan Username..">
+        <button type="button" id="submit-user" name="button" value="submit">Masuk</button>
+      </div>
+    </div>
 
-    </ul>
-    <form id="form-chat" action="/" method="post">
-      <!-- <input type="text" id="text-box" name="text-box" value=""> -->
-      <textarea name="message" id="text-box" rows="10" cols="30" placeholder="chat disini.."></textarea>
-      <button id="send" type="submit" name="button">Send</button>
-    </form>
+      <div id="chatroom" class="hidden">
+        <div class="container">
+          <h1>Chat</h1>
+          <ul id="messages">
+
+          </ul>
+        </div>
+        <form id="form-chat" action="/" method="post">
+          <input type="text" id="text-box" name="text-box" placeholder="chat disini.." value="">
+          <!-- <textarea name="message" id="text-box" rows="10" cols="30" placeholder="chat disini.."></textarea> -->
+          <button id="send" type="submit" name="button">Send</button>
+        </form>
+      </div>
+
+
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
       var socket = io();
-
+      //get value from textbox
       $('#form-chat').submit(function(){
         socket.emit('newMessage', $('#text-box').val());
         $('#text-box').val('');
         return false;
       });
+      //show chat to #messages
       socket.on('newMessage', function(msg){
         $('#messages').append($('<li>').text(msg));
+      });
+      //hidden homepage and show chatroom
+      $('#submit-user').click(function(){
+        //validate username
+        if ($('#user') != '') {
+          username = $('#user').val();
+          socket.emit('registerUser', username);
+        }
+      });
+
+      //registerRespond
+      socket.on('registerRespond', function(status){
+        if (status == false) {
+          alert('nama user sudah ada, cari nama lain')
+        } else {
+          $('#chatroom').removeClass('hidden');
+          $('#homepage').addClass('hidden');
+        }
       });
     </script>
   </body>
