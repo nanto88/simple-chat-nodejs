@@ -17,11 +17,21 @@
 
       <div id="chatroom" class="hidden">
         <div class="container">
-          <h1>Chat</h1>
-          <ul id="messages">
+          <div class="row">
+            <div class="col-8">
+              <h1>Chat</h1>
+              <ul id="messages">
+              </ul>
+            </div>
 
-          </ul>
+            <div class="col-4">
+              <h1>User List</h1>
+              <ul id="users-list">
+              </ul>
+            </div>
+          </div>
         </div>
+
         <form id="form-chat" action="/" method="post">
           <input type="text" id="text-box" name="text-box" placeholder="chat disini.." value="">
           <!-- <textarea name="message" id="text-box" rows="10" cols="30" placeholder="chat disini.."></textarea> -->
@@ -30,20 +40,38 @@
       </div>
 
 
+
+
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
       var socket = io();
+      //hours:minutes > 09:09
+      var d = new Date();
+      var h = d.getHours();
+      var m = d.getMinutes();
+      var m = ('0'+m).slice(-2);
       //get value from textbox
       $('#form-chat').submit(function(){
         socket.emit('newMessage', $('#text-box').val());
         $('#text-box').val('');
         return false;
       });
+
+      //users list
+      socket.on('addOnlineUsers', function(usernames){
+        $('#users-list').empty();
+
+        for(var i=0; i<usernames.length; i++) {
+          $('#users-list').append($('<li id="user_' + usernames[i] +'">').text(usernames[i]));
+        }
+      });
+
       //show chat to #messages
       socket.on('newMessage', function(msg){
-        $('#messages').append($('<li>').text(msg));
+        $('#messages').append($('<li>').text(msg + ' | ' + h+':'+m);
       });
+
       //hidden homepage and show chatroom
       $('#submit-user').click(function(){
         //validate username

@@ -26,8 +26,13 @@ io.on('connection', function(socket){
       users[socket.id] = username;
       usernames.push(username);
       socket.emit('registerRespond', true);
+      io.emit('addOnlineUsers', usernames);
+      console.log(users);
+      console.log("--------");
+      console.log(usernames);
     }
   });
+
 
   //if has new messages
   socket.on('newMessage', function(msg){
